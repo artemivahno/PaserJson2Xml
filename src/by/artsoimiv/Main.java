@@ -11,6 +11,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.printf("");
+        JsonFileReader jsonFileReader = new JsonFileReader();
+
+        System.out.printf("Конец");
     }
 }

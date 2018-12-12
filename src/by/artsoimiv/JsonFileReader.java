@@ -2,6 +2,8 @@ package by.artsoimiv;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 public class JsonFileReader {
@@ -11,7 +13,12 @@ public class JsonFileReader {
     private void readJson(){
         final String filepath = FILENAME;
 
-        final File jsonFile = new File(filepath);
-    }
+        try {
+            final FileReader jsonFile = new FileReader(filepath);
 
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

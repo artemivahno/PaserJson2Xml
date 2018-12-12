@@ -1,17 +1,10 @@
 package by.artsoimiv;
 
-public class MyException extends RuntimeException{
+import java.io.FileNotFoundException;
+
+public class MyException extends FileNotFoundException {
 
     public MyException(final String message) {
         super(message);
     }
-
-    public MyException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public MyException(final Throwable cause) {
-        super(cause.getMessage(), cause);
-    }
-
 }

@@ -1,13 +1,10 @@
 package by.artsoimiv;
 
 
+import jdk.nashorn.internal.parser.JSONParser;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 
 public class JsonFileReader {
@@ -26,6 +23,7 @@ public class JsonFileReader {
 
 
     }
+   //JSONParser parser = new JSONParser();
 
     String jsonStr = "{\"Customer\": {" +
             "\"address\": {" +
@@ -36,7 +34,7 @@ public class JsonFileReader {
             "\"age\": 37" +
             "}}";
 
-//    JSONObject json = new JSONObject(jsonStr);
+    //JSONObject json = new JSONObject(jsonStr);
 //    String xml = XML.toString(json);
 //
 //System.out.println(xml);

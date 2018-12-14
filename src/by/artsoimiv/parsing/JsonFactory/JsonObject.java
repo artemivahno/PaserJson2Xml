@@ -41,12 +41,11 @@ public class JsonObject extends JsonNode{
         return value.map(node -> (T) node);
     }
 
-//Возвращает значение ключа аргумента как есть или пустое значение Optional если ключ отсутствует.
     public Optional<JsonNode> value(String key) {
         return Optional.ofNullable(values.get(key));
     }
 
-
+//Возвращает значение ключа аргумента как есть или пустое значение Optional если ключ отсутствует.
     @Override
     public void toJson(PrintWriter printWriter, String currentIntentation, String indentatinAmount) {
 

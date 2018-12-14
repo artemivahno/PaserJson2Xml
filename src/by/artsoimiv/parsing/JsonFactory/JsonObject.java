@@ -1,11 +1,13 @@
 package by.artsoimiv.parsing.JsonFactory;
 
 import by.artsoimiv.parsing.Exception.JsonConversionException;
+import by.artsoimiv.parsing.Exception.JsonValueNotPresentException;
 
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 //JsonObject - класс представляет словарь значений по строке ключи.  Каждое значение может быть JsonArray, числом, строкой,
 // логическое значение или другим объектом. Например: <code>{"foo":"string", "number":123, "really":false]}</code>,
@@ -32,7 +34,18 @@ public class JsonObject extends JsonNode{
     }
 
 //Возвращает значение ключа в виде String. кидает JsonValueNotPresentException если ключ не получаем или не верный тип
-//    public String requiredString(String key) throws
+    public String requiredString(String key) throws JsonValueNotPresentException {
+        return stringValue(key).orElseThrow(throwKeyNotPresent(key));
+    }
+
+    private Supplier<JsonValueNotPresentException> throwKeyNotPresent(String key) {
+        return () -> new JsonValueNotPresentException(String.format("Требуемый ключ '%s' не существует",key));
+    }
+
+//    public Optional<Double> doubleValue(String key) throws JsonConversionException {
+//        return numberValue (key).map(Number::doubleValue); //120
+//    }
+
 
 
 //Возвращает значение ключа аргумента как есть или пустое значение Optional если ключ отсутствует.

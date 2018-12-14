@@ -31,9 +31,21 @@ public class JsonObject extends JsonNode{
         return get(key, JsonValue.class).map(JsonValue::stringValue);
     }
 
+//Возвращает значение ключа в виде String. кидает JsonValueNotPresentException если ключ не получаем или не верный тип
+//    public String requiredString(String key) throws
+
+
+//Возвращает значение ключа аргумента как есть или пустое значение Optional если ключ отсутствует.
+// JsonConversionException - если значение неопределенного типа
+
+    public Optional<JsonNode> value(String key) {
+        return Optional.ofNullable(values.get(key));
+    }
+
 //Возвращает значение ключа аргумента в качестве типа аргумента или пустого Optional если ключ отсутствует.
 // кидает JsonConversionException - если значение неопределенного типа
-    private <T> Optional<T> get(String key, Class<T> t) throws JsonConversionException{
+
+    private <T extends JsonNode> Optional<T> get(String key, Class<T> t) throws JsonConversionException{
         Optional<JsonNode> value = value(key);
         if (value.isPresent() && !t.isAssignableFrom(value.get().getClass())) {
             throw new JsonConversionException("Не могу сконвертировать "+ key + " в "+t);
@@ -41,11 +53,9 @@ public class JsonObject extends JsonNode{
         return value.map(node -> (T) node);
     }
 
-    public Optional<JsonNode> value(String key) {
-        return Optional.ofNullable(values.get(key));
-    }
 
-//Возвращает значение ключа аргумента как есть или пустое значение Optional если ключ отсутствует.
+
+
     @Override
     public void toJson(PrintWriter printWriter, String currentIntentation, String indentatinAmount) {
 

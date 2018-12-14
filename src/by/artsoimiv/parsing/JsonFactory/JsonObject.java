@@ -4,6 +4,7 @@ import by.artsoimiv.parsing.Exception.JsonConversionException;
 import by.artsoimiv.parsing.Exception.JsonValueNotPresentException;
 
 import java.io.PrintWriter;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -42,11 +43,83 @@ public class JsonObject extends JsonNode{
         return () -> new JsonValueNotPresentException(String.format("Требуемый ключ '%s' не существует",key));
     }
 
+//Возвращает значение аргумента как double или пустой. JsonConversionException если значение не конвертируется в число.
 //    public Optional<Double> doubleValue(String key) throws JsonConversionException {
-//        return numberValue (key).map(Number::doubleValue); //120
+//        return numberValue(key).map(Number::doubleValue);
+//    }
+
+// //Возвращает значение аргумента как double
+//    public double requiredDouble(String key) throws JsonValueNotPresentException {
+//        return doubleValue(key).orElseThrow(throwKeyNotPresent(key));
 //    }
 
 
+//Возвращает значение ключа в виде числа или пустого элемента Optional если ключа нет. JsonConversionException если
+// значение не конвертируется в число
+    public Optional<Object> numberValue(String key) throws JsonConversionException {
+        JsonNode node = values.get(key);
+        if (node == null || node instanceof JsonNull){
+            return Optional.empty();
+        }
+        if (node instanceof JsonNumber) {
+            return Optional.of(((JsonNumber)node).javaObjectValue());
+        }
+        if (node instanceof JsonValue){
+            String stringValue = node.stringValue();
+            if (stringValue.isEmpty()){
+                return Optional.empty();
+            }
+            try {
+                return Optional.of(Double.parseDouble(stringValue()));
+            } catch (NumberFormatException e){
+                throw new JsonConversionException(key + " это не число");
+            }
+        } else {
+            throw new JsonConversionException(key + " это не число");
+        }
+    }
+//Возвращает значение аргумента key как boolean. JsonValueNotPresentException - если key не представлен,
+// JsonConversionException если key не boolean
+    public boolean reqiredBoolean(String key) throws JsonConversionException, JsonValueNotPresentException {
+        return booleanValue(key).orElseThrow(throwKeyNotPresent(key));
+    }
+
+    public Optional<Boolean> booleanValue(String key) throws JsonConversionException {
+        JsonNode node = values.get(key);
+        if (node == null || node instanceof JsonNull){
+            return Optional.empty();
+        }
+        if (node instanceof JsonBoolean) {
+            return Optional.of(((JsonBoolean)node).booleanValue());
+        }
+        if (node instanceof JsonValue) {
+            return Optional.of(Boolean.parseBoolean(node.stringValue()));
+        }else {
+            throw new JsonConversionException(key + " этот ключ не boolean");
+        }
+    }
+
+//Возвращает значение аргумента key как boolean. JsonValueNotPresentException если ключ не прдставлен,
+// JsonConversionException key не конвертируется в boolean.
+    public boolean requiredBoolean (String key)throws JsonConversionException, JsonValueNotPresentException{
+        return booleanValue(key).orElseThrow(throwKeyNotPresent(key));
+    }
+
+//Возвращает значение ключа аргумента в виде JsonObject или пустого
+//Optional, если ключа нет. JsonConversionException если значение не JsonObject.
+    public Optional<JsonObject> objectValue(String key)throws JsonConversionException{
+        return get(key, JsonObject.class);
+    }
+
+//Возвращает в качестве ключа JsonObject. JsonValueNotPresentException если ключ не JsonObject или ключа нет.
+    public JsonObject requiredObject(String key) throws JsonValueNotPresentException {
+        return objectValue(key).orElseThrow(throwKeyNotPresent(key));
+    }
+
+    //возвращает значение ключа аргумента в виде {Instant} или пустого Optional, если ключ отсутствует.
+    public Optional<Instant> instantValue(String key) {
+        return stringValue(key).map(s -> Instant.parse(s));
+    }
 
 //Возвращает значение ключа аргумента как есть или пустое значение Optional если ключ отсутствует.
 // JsonConversionException - если значение неопределенного типа

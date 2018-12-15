@@ -5,10 +5,9 @@ import by.artsoimiv.parsing.Exception.JsonValueNotPresentException;
 
 import java.io.PrintWriter;
 import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 //JsonObject - класс представляет словарь значений по строке ключи.  Каждое значение может быть JsonArray, числом, строкой,
 // логическое значение или другим объектом. Например: <code>{"foo":"string", "number":123, "really":false]}</code>,
@@ -19,6 +18,7 @@ public class JsonObject extends JsonNode{
 
     private final Map<String, JsonNode> values;
 
+//Производит пустой JsonObject
     public JsonObject() {
         this.values = new LinkedHashMap<>();
     }
@@ -163,18 +163,102 @@ public class JsonObject extends JsonNode{
         return value.map(node -> (T) node);
     }
 
+//Возвращает значение ключа аргумента в виде JsonArray или пустого
+    public Optional<JsonArray> arrayVaiue(String key) throws JsonConversionException {
+        return get(key, JsonArray.class);
+    }
 
+//Возвращает значение ключа аргумента в виде JsonArray.
+    public JsonArray requiredArray(String key){
+        return arrayVaiue(key).orElseThrow(throwKeyNotPresent(key));
+    }
 
-
+//Записывает текстовое представление JSON этого JsonArray
     @Override
     public void toJson(PrintWriter printWriter, String currentIntentation, String indentatinAmount) {
+        printWriter.append("{");
+        if (!indentatinAmount.isEmpty()) printWriter.append("\n");
+        for (Iterator<Map.Entry<String,JsonNode>> iterator = values.entrySet().iterator(); iterator.hasNext();){
+            Map.Entry<String,JsonNode> entry = iterator.next();
+            printWriter.append(currentIntentation + indentatinAmount);
+            printWriter.append('"');
+            printWriter.append(entry.getKey());
+            printWriter.append("\":");
+            entry.getValue().toJson(printWriter, currentIntentation + indentatinAmount, indentatinAmount);
 
+            if (iterator.hasNext()) {
+                printWriter.append(",");
+            }
+
+            if (!indentatinAmount.isEmpty()) printWriter.append("\n");
+        }
+        printWriter.append(currentIntentation + "}");
+    }
+//Связывает указанное значение с указанным ключом. Если map ранее содержала значение для ключа, старое значение заменяется
+    public JsonObject put(String key, Object value) {
+        values.put(key, JsonFactory.jsonNode(value));
+        return this;
+    }
+
+//Возвращает все ключи этого JsonObject.
+    public Set<String> keys(){
+        return values.keySet();
+    }
+
+//Удаляет и возвращает значение, указанное ключом аргумента.
+    public Optional<JsonNode> remove(String key){
+        if(key == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(values.remove(key));
+    }
+
+//Создает копию этого JsonObject со всеми скопированными значениями
+    @Override
+    public JsonObject deepClone() {
+        Map<String, JsonNode> cloned = values.entrySet().stream()
+                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue().deepClone()));
+        Map<String, JsonNode> newValues = new HashMap<>();
+        newValues.putAll(cloned);
+        return new JsonObject(newValues);
+    }
+
+//Возвращает true, если аргумент является JsonObject с тем же значением что и этот объект
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JsonObject)) return false;
+        JsonObject that = (JsonObject) o;
+        return Objects.equals(values, that.values);
     }
 
     @Override
-    public JsonNode deepClone() {
-        return null;
-
+    public int hashCode() {
+        return Objects.hash(values);
     }
 
+//Возвращает количество элементов в этом JsonObject
+    public int size() {
+        return values.size();
+    }
+
+// Возвращает true, если этот JsonObject не содержит значений.
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
+// Удаляет все значения в этом JsonObject.
+    public void clear() {
+        values.clear();
+    }
+// Возвращает true, если этот JsonObject имеет значение для указанного ключа.
+    public boolean containsKey(String key) {
+        return values.containsKey(key);
+    }
+
+//Поместите все объекты из исходного JsonObject в этот
+    public JsonObject putAll(JsonObject source) {
+        values.putAll(source.values);
+        return this;
+    }
 }

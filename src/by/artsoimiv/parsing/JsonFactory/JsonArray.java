@@ -5,6 +5,7 @@ import by.artsoimiv.parsing.Exception.JsonValueNotPresentException;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -117,8 +118,10 @@ public class JsonArray extends JsonNode implements Iterable<JsonNode>{
         return requiredNumber(pos).longValue();
     }
 
-
-
+//Возвращает значение в позиции аргумента как double.
+    public double requiredDouble(int pos) throws JsonConversionException {
+        return requiredNumber(pos).doubleValue();
+    }
 
 //Возвращает значение в позиции аргумента как число.
     public Number requiredNumber(int pos) throws JsonConversionException {
@@ -132,13 +135,38 @@ public class JsonArray extends JsonNode implements Iterable<JsonNode>{
             try {
                 return Double.parseDouble(((JsonValue)jsonNode).stringValue());
             } catch (NumberFormatException e) {
-                throw new JsonConversionException(jsonNode + " is not numeric");
+                throw new JsonConversionException(jsonNode + " не число");
             }
         } else {
-            throw new JsonConversionException(jsonNode + " is not numeric");
+            throw new JsonConversionException(jsonNode + " не число");
         }
     }
 
+
+//Возвращает значение в позиции аргумента boolean.
+public boolean requiredBoolean(int pos) throws JsonConversionException {
+    return asBoolean(get(pos));
+}
+
+    public boolean asBoolean(JsonNode jsonNode) {
+        if (jsonNode instanceof JsonBoolean) {
+            return ((JsonBoolean)jsonNode).booleanValue();
+        } else if (jsonNode instanceof JsonValue) {
+            return Boolean.parseBoolean(((JsonValue)jsonNode).stringValue());
+        } else {
+            throw new JsonConversionException(jsonNode + " не boolean");
+        }
+    }
+
+//Возвращает значение в позиции аргумента как указанный тип Enum.
+    public <T extends Enum<T>> T requiredEnum(int pos, Class<T> enumType) {
+        return Enum.valueOf(enumType, requiredString(pos));
+    }
+
+//Возвращает значение в позиции аргумента как instant
+    public Instant requiredInstant(int pos) {
+        return Instant.parse(requiredString(pos));
+    }
 
 //Возвращает значение в позиции аргумента, преобразованное в класс аргумента.
     public <T> T get(int pos, Class<T> jsonClass) throws JsonConversionException, JsonValueNotPresentException {
@@ -199,8 +227,18 @@ public class JsonArray extends JsonNode implements Iterable<JsonNode>{
     }
 
 //Возвращает поток членов этого JsonArray.
-    public Stream <JsonNode> nodeStream(){
+    public Stream<JsonNode> nodeStream(){
         return values.stream();
+    }
+
+// Возвращает список children, которые являются массивами. Children, не являющиеся JsonNode, пропускаются
+    public List<JsonArray> arrays() {
+        return arrayStream().collect(Collectors.toList());
+    }
+    public Stream<JsonArray> arrayStream() {
+        return nodeStream()
+                .filter(n -> n instanceof JsonArray)
+                .map(n -> (JsonArray)n);
     }
 
     @Override
@@ -211,4 +249,21 @@ public class JsonArray extends JsonNode implements Iterable<JsonNode>{
     public boolean isEmpty(){
         return values.isEmpty();
     }
+
+//Удаляет значение в указанной позиции. Возвращает значение, которое было удалено.
+    public JsonNode remove(int i) {
+        return values.remove(i);
+    }
+
+//Удаляет все значения в этом JsonArray
+    public void clear() {
+        values.clear();
+    }
+
+//Заменяет значение в указанной позиции.
+    public void set(int i, Object o) {
+        values.set(i, JsonFactory.jsonNode(o));
+    }
+
+
 }

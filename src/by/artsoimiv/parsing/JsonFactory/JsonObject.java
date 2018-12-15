@@ -51,8 +51,18 @@ public class JsonObject extends JsonNode{
 // //Возвращает значение аргумента как double
 //    public double requiredDouble(String key) throws JsonValueNotPresentException {
 //        return doubleValue(key).orElseThrow(throwKeyNotPresent(key));
-//    }
+    //    }
 
+//Возвращает значение аргумента как long или пустое
+//JsonConversionException если значение не конвертируется в число
+//    public Optional<Long> longValue(String key) throws JsonConversionException{
+//        return numberValue(key).map(Number::longValue);
+//    }
+//
+//    //Возвращает значение аргумента как long
+//    public double requiredLong(String key) throws JsonValueNotPresentException {
+//        return longValue(key).orElseThrow(throwKeyNotPresent(key));
+//    }
 
 //Возвращает значение ключа в виде числа или пустого элемента Optional если ключа нет. JsonConversionException если
 // значение не конвертируется в число
@@ -120,17 +130,31 @@ public class JsonObject extends JsonNode{
     public Optional<Instant> instantValue(String key) {
         return stringValue(key).map(s -> Instant.parse(s));
     }
+//возвращает значение ключа аргумента в виде {Instant}
+    public Instant requiredInstant (String key){
+        return instantValue(key).orElseThrow(throwKeyNotPresent(key));
+    }
 
-//Возвращает значение ключа аргумента как есть или пустое значение Optional если ключ отсутствует.
+    //возвращает значение ключа аргумента в виде Enum или пустого Optional, если ключ отсутствует.
+    private <T extends Enum<T>> Optional<T> enumValue(String key, Class<T> enumType){
+        return stringValue(key).map(s->Enum.valueOf(enumType,s));
+    }
+
+    //возвращает значение ключа аргумента в виде Enum
+    public <T extends Enum<T>> T requifedEnum(String key, Class<T> enumType){
+        return enumValue(key, enumType).orElseThrow(throwKeyNotPresent(key));
+    }
+
+
+
+    //Возвращает значение ключа аргумента как есть или пустое значение Optional если ключ отсутствует.
 // JsonConversionException - если значение неопределенного типа
-
     public Optional<JsonNode> value(String key) {
         return Optional.ofNullable(values.get(key));
     }
 
 //Возвращает значение ключа аргумента в качестве типа аргумента или пустого Optional если ключ отсутствует.
 // кидает JsonConversionException - если значение неопределенного типа
-
     private <T extends JsonNode> Optional<T> get(String key, Class<T> t) throws JsonConversionException{
         Optional<JsonNode> value = value(key);
         if (value.isPresent() && !t.isAssignableFrom(value.get().getClass())) {

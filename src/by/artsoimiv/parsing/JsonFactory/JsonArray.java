@@ -1,10 +1,9 @@
 package by.artsoimiv.parsing.JsonFactory;
 
-import by.artsoimiv.parsing.Exception.JsonConversionException;
-import by.artsoimiv.parsing.Exception.JsonValueNotPresentException;
+import by.artsoimiv.parsing.exception.JsonConversionException;
+import by.artsoimiv.parsing.exception.JsonValueNotPresentException;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;

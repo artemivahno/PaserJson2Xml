@@ -1,4 +1,4 @@
-package by.artsoimiv.parsing.Exception;
+package by.artsoimiv.parsing.exception;
 
 public class JsonParserException extends RuntimeException{
     public JsonParserException (String message) {

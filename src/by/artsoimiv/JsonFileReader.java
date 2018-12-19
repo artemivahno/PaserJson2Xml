@@ -9,9 +9,9 @@ import java.io.FileReader;
 
 public class JsonFileReader {
 
-    private static final String FILENAME = "h:\\Dropbox\\My Files\\_Java\\";
+    private static final String FILENAME = "h:\\Dropbox\\My Files\\_Java\\friends.json";
 
-    private void readJson(){
+    public void readJson(){
         final String filepath = FILENAME;
 
         try {
@@ -20,9 +20,8 @@ public class JsonFileReader {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-
     }
+
    //JSONParser parser = new JSONParser();
 
     String jsonStr = "{\"Customer\": {" +
@@ -34,10 +33,6 @@ public class JsonFileReader {
             "\"age\": 37" +
             "}}";
 
-    //JSONObject json = new JSONObject(jsonStr);
-//    String xml = XML.toString(json);
-//
-//System.out.println(xml);
 //
 //    // 2. Convert Json File -> XML File
 //    String jsonFile = System.getProperty("user.dir") + "\\file.json";

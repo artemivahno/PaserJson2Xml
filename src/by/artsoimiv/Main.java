@@ -1,5 +1,10 @@
 package by.artsoimiv;
 
+import by.artsoimiv.parsing.JsonFactory.JsonFactory;
+import by.artsoimiv.parsing.JsonFactory.JsonObject;
+import by.artsoimiv.parsing.JsonParser;
+import by.artsoimiv.parsing.pojo.PojoMapper;
+
 public class Main {
 
     //Задача: Написать конвертер с Json в Xml без использования доп.библиотек
@@ -13,6 +18,8 @@ public class Main {
 
         JsonFileReader jsonFileReader = new JsonFileReader();
 
-        System.out.printf("Конец");
+       // JsonObject o = (JsonObject)JsonParser.parse(jsonFileReader);
+
+        System.out.println("Конец " );
     }
 }

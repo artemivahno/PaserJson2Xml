@@ -1,7 +1,8 @@
 package by.artsoimiv.parsing;
 
-import by.artsoimiv.JsonParseException;
 import by.artsoimiv.parsing.JsonFactory.*;
+import by.artsoimiv.parsing.exception.JsonHttpException;
+import by.artsoimiv.parsing.exception.JsonParseException;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class JsonParser {
 //Разбор читателя как JsonNode. Вернет JsonArray, JsonValue.
@@ -29,34 +31,69 @@ public class JsonParser {
     }
 
 //Parse String как JsonObject
-//    public static JsonObject parseToObject(String input) throws JsonParseException  {
-//        return parseToObject(new StringReader(input));
-//    }
+    public static JsonObject parseToObject(String input) throws JsonParseException  {
+        return parseToObject(new StringReader(input));
+    }
 //Parse Reader как JsonObject
-////    public static JsonObject parseToObject(Reader reader) throws JsonParseException {
-////        JsonParser jsonParser = new JsonParser(reader);
-////        return toObject(jsonParser.parseValue());
-////    }
-//
-////Parse InputStream как JsonObject
-//    public static JsonObject parseToObject(InputStream inputStream) throws JsonParseException {
-//        return parseToObject(new InputStreamReader(inputStream));
-//    }
-//
-////
-//    public static JsonObject parseToObject(URL url) throws IOException {
-//        return parseToObject(url.openConnection());
-//    }
-//
-//    public static JsonObject parseToObject(URLConnection connection) throws IOException {
-//        HttpURLConnection httpConnection = (HttpURLConnection) connection;
-//        if (httpConnection.getResponseCode() < 400) {
-//            try (InputStream input = connection.getInputStream()) {
-//                return parseToObject(input);
-//            }
-//        }
-//    }
+    public static JsonObject parseToObject(Reader reader) throws JsonParseException {
+        JsonParser jsonParser = new JsonParser(reader);
+        return toObject(jsonParser.parseValue());
+    }
 
+//Parse InputStream как JsonObject
+    public static JsonObject parseToObject(InputStream inputStream) throws JsonParseException {
+        return parseToObject(new InputStreamReader(inputStream));
+    }
+
+//
+    public static JsonObject parseToObject(URL url) throws IOException {
+        return parseToObject(url.openConnection());
+    }
+
+    public static JsonObject parseToObject(URLConnection connection) throws IOException {
+        HttpURLConnection httpConnection = (HttpURLConnection) connection;
+        if (httpConnection.getResponseCode() < 400) {
+            try (InputStream input = connection.getInputStream()) {
+                return parseToObject(input);
+            }
+        }
+        else {
+            throw new JsonHttpException(httpConnection);
+        }
+    }
+
+    private static JsonObject toObject(JsonNode result) {
+        if (!(result instanceof JsonObject)) {
+            throw new JsonParseException("Expected json object got " +
+                    Optional.ofNullable(result).map(Object::getClass).map(Object::toString).orElse("null"));
+        }
+        return (JsonObject) result;
+    }
+
+//Parse String как JsonObject
+    public static JsonArray parseToArray(String input) throws JsonParseException  {
+        return parseToArray(new StringReader(input));
+    }
+
+//Parse InputStream как JsonObject
+    public static JsonArray parseToArray(InputStream inputStream) throws JsonParseException  {
+        return parseToArray(new InputStreamReader(inputStream));
+    }
+
+//Parse Reader как JsonObject
+    public static JsonArray parseToArray(Reader reader) throws JsonParseException {
+        JsonParser jsonParser = new JsonParser(reader);
+        return toArray(jsonParser.parseValue());
+    }
+
+//
+    private static JsonArray toArray(JsonNode result) {
+        if (!(result instanceof JsonArray)) {
+            throw new JsonParseException("Expected json array got " +
+                    Optional.ofNullable(result).map(Object::getClass).map(Object::toString).orElse("null"));
+        }
+        return (JsonArray) result;
+    }
 
     private Reader reader;
     private char lastRead;

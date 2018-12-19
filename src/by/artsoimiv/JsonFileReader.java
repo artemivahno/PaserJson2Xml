@@ -1,8 +1,6 @@
 package by.artsoimiv;
 
 
-import jdk.nashorn.internal.parser.JSONParser;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
@@ -15,14 +13,13 @@ public class JsonFileReader {
         final String filepath = FILENAME;
 
         try {
-            final FileReader jsonFile = new FileReader(filepath);
+            final FileReader jsonString = new FileReader(filepath);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-   //JSONParser parser = new JSONParser();
 
     String jsonStr = "{\"Customer\": {" +
             "\"address\": {" +

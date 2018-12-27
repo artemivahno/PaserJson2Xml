@@ -19,20 +19,16 @@ package by.artsoimiv.nexttry.exception;
 /**
  * Terminate the application early for whatever reason including status code 0.
  */
-public class EarlyExitException extends Exception
-{
-  public EarlyExitException()
-  {
-    super();
-  }
+public class EarlyExitException extends Exception {
+    public EarlyExitException() {
+        super();
+    }
 
-  public EarlyExitException( String message )
-  {
-    super( message );
-  }
+    public EarlyExitException(String message) {
+        super(message);
+    }
 
-  public EarlyExitException( String message, Throwable exception )
-  {
-    super( message, exception );
-  }
+    public EarlyExitException(String message, Throwable exception) {
+        super(message, exception);
+    }
 }

@@ -20,20 +20,16 @@ package by.artsoimiv.nexttry.exception;
  * Stuff like no key when found an array. This is either a syntax
  * error, or our parser is broken.
  */
-public class ParserBrokenException extends Exception
-{
-  public ParserBrokenException()
-  {
-    super();
-  }
+public class ParserBrokenException extends Exception {
+    public ParserBrokenException() {
+        super();
+    }
 
-  public ParserBrokenException( String message )
-  {
-    super( message );
-  }
+    public ParserBrokenException(String message) {
+        super(message);
+    }
 
-  public ParserBrokenException( String message, Throwable exception )
-  {
-    super( message, exception );
-  }
+    public ParserBrokenException(String message, Throwable exception) {
+        super(message, exception);
+    }
 }

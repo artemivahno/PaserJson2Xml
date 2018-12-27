@@ -112,11 +112,11 @@ public class JsonToXmlFilter {
         } catch (ParserBrokenException e) {
             e.printStackTrace();
         }
-      XmlGenerator generator = createAndConfigureGenerator();
+        XmlGenerator generator = createAndConfigureGenerator();
 
-      String xml = generator.generate( element );
+        String xml = generator.generate(element);
 
-      System.out.println(xml);
+        System.out.println(xml);
 
 //        try
 //        {
@@ -166,34 +166,32 @@ public class JsonToXmlFilter {
         return new String(contents, "UTF-8");
     }
 
-  private static XmlGenerator createAndConfigureGenerator()
-  {
-    XmlGenerator generator = new XmlGenerator();
+    private static XmlGenerator createAndConfigureGenerator() {
+        XmlGenerator generator = new XmlGenerator();
 
-    if( !isEmpty( ROOTNAME ) )
-      generator.setRootName( ROOTNAME );
-    if( !isEmpty( XMLDECL ) )
-      generator.setXmlDeclaration( XMLDECL );
-    if( !isEmpty( DTD ) )
-      generator.setDtd( DTD );
-    if( !isEmpty( DOCTYPE ) )
-      generator.setDocType( DOCTYPE );
+        if (!isEmpty(ROOTNAME))
+            generator.setRootName(ROOTNAME);
+        if (!isEmpty(XMLDECL))
+            generator.setXmlDeclaration(XMLDECL);
+        if (!isEmpty(DTD))
+            generator.setDtd(DTD);
+        if (!isEmpty(DOCTYPE))
+            generator.setDocType(DOCTYPE);
 
-    // pretty printing stuff...
-    int tabwidth = 0;
+        // pretty printing stuff...
+        int tabwidth = 0;
 
-    if( !isEmpty( TABWIDTH ) )
-      tabwidth = Integer.parseInt( TABWIDTH );
+        if (!isEmpty(TABWIDTH))
+            tabwidth = Integer.parseInt(TABWIDTH);
 
-    if( PRETTY )
-    {
-      if( tabwidth > 0 )
-        generator.configurePrettyPrinter( true, tabwidth );
-      else
-        generator.configurePrettyPrinter( true );
+        if (PRETTY) {
+            if (tabwidth > 0)
+                generator.configurePrettyPrinter(true, tabwidth);
+            else
+                generator.configurePrettyPrinter(true);
+        }
+
+
+        return generator;
     }
-
-
-    return generator;
-  }
 }

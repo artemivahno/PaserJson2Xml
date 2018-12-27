@@ -22,15 +22,15 @@ package by.artsoimiv.nexttry.exception;
  */
 public class IllegalCharacterOutsideOfTokenException extends Exception {
 
-  public IllegalCharacterOutsideOfTokenException() {
-    super();
-  }
+    public IllegalCharacterOutsideOfTokenException() {
+        super();
+    }
 
-  public IllegalCharacterOutsideOfTokenException(String message) {
-    super(message);
-  }
+    public IllegalCharacterOutsideOfTokenException(String message) {
+        super(message);
+    }
 
-  public IllegalCharacterOutsideOfTokenException(String message, Throwable exception) {
-    super(message, exception);
-  }
+    public IllegalCharacterOutsideOfTokenException(String message, Throwable exception) {
+        super(message, exception);
+    }
 }

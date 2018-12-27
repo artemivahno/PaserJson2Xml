@@ -18,23 +18,19 @@ package by.artsoimiv.nexttry.exception;
 
 /**
  * When there are no more tokens...
- * <p />
+ * <p/>
  * ...including that the last token scanned was incomplete or otherwise bad.
  */
-public class NoMoreTokensException extends Exception
-{
-  public NoMoreTokensException()
-  {
-    super();
-  }
+public class NoMoreTokensException extends Exception {
+    public NoMoreTokensException() {
+        super();
+    }
 
-  public NoMoreTokensException( String message )
-  {
-    super( message );
-  }
+    public NoMoreTokensException(String message) {
+        super(message);
+    }
 
-  public NoMoreTokensException( String message, Throwable exception )
-  {
-    super( message, exception );
-  }
+    public NoMoreTokensException(String message, Throwable exception) {
+        super(message, exception);
+    }
 }

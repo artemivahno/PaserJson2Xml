@@ -23,7 +23,7 @@ public class JsonFileReader {
 
     public void setJsonStrigFromFile(String jsonStrigFromFile) {
         this.jsonStrigFromFile = jsonStrigFromFile;
-        jsonInput=(getFile("by/artsoimiv/recources/sample.json"));
+        jsonInput = (getFile("by/artsoimiv/recources/sample.json"));
     }
 
     public String getFile(String input) {
@@ -46,8 +46,6 @@ public class JsonFileReader {
         }
         return result.toString();
     }
-
-
 
 
 }

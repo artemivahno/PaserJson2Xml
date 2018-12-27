@@ -1,19 +1,16 @@
 package by.artsoimiv.parsing;
 
 import by.artsoimiv.parsing.JsonFactory.*;
-import by.artsoimiv.parsing.exception.JsonHttpException;
 import by.artsoimiv.parsing.exception.JsonParseException;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 public class JsonParser {
+
 //Разбор читателя как JsonNode. Вернет JsonArray, JsonValue.
     public static JsonNode parse(Reader reader) throws JsonParseException {
     JsonParser jsonParser = new JsonParser(reader);
@@ -45,8 +42,8 @@ public class JsonParser {
         return parseToObject(new InputStreamReader(inputStream));
     }
 
-//
-    public static JsonObject parseToObject(URL url) throws IOException {
+//URL
+/*    public static JsonObject parseToObject(URL url) throws IOException {
         return parseToObject(url.openConnection());
     }
 
@@ -60,7 +57,7 @@ public class JsonParser {
         else {
             throw new JsonHttpException(httpConnection);
         }
-    }
+    }*/
 
     private static JsonObject toObject(JsonNode result) {
         if (!(result instanceof JsonObject)) {
@@ -99,7 +96,7 @@ public class JsonParser {
     private char lastRead;
     private boolean finished;
 
-    private JsonParser(Reader reader) {
+    public JsonParser(Reader reader) {
         this.reader = reader;
         readNext();
     }
@@ -118,7 +115,7 @@ public class JsonParser {
         this.lastRead = (char) read;
     }
 
-    private JsonNode parseValue() {
+    public JsonNode parseValue() {
         while (!finished) {
             switch (lastRead) {
                 case '{':

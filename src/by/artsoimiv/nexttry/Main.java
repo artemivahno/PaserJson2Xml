@@ -1,4 +1,4 @@
-package by.artsoimiv;
+package by.artsoimiv.nexttry;
 
 public class Main {
 

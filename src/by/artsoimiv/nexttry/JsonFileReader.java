@@ -1,4 +1,4 @@
-package by.artsoimiv;
+package by.artsoimiv.nexttry;
 
 
 import java.io.File;

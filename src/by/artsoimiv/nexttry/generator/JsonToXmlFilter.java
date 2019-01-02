@@ -6,9 +6,7 @@ import by.artsoimiv.nexttry.exception.ParserBrokenException;
 import by.artsoimiv.nexttry.parser.Element;
 import by.artsoimiv.nexttry.parser.JsonParser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class JsonToXmlFilter {
 
@@ -21,6 +19,7 @@ public class JsonToXmlFilter {
     private static String TABWIDTH = null;
     private static String INPUTFILE = null;
 
+    private static boolean PASSIVE = false;
     private static boolean PRETTY = false;
 
     private static void badCommandLine() throws EarlyExitException {
@@ -107,46 +106,53 @@ public class JsonToXmlFilter {
 
         Element element = null;
 
-        try {
+        /*try {
             element = parser.parse();
         } catch (ParserBrokenException e) {
             e.printStackTrace();
         }
         XmlGenerator generator = createAndConfigureGenerator();
 
-        String xml = generator.generate(element);
+        String xml = generator.generate(element);*/
 
-        System.out.println(xml);
 
-//        try
-//        {
-//            parseOptionsFromCommandLine( args );
-//
-//            try
-//            {
-//                if( PASSIVE )
-//                {
-//                    outputOptionsAsIfToRun();
-//                    throw new EarlyExitException();
-//                }
-//
-//                element = parser.parse();
-//            }
-//            catch( ParserBrokenException e )
-//            {
-//                e.printStackTrace();
-//            }
-//
-//            XmlGenerator generator = createAndConfigureGenerator();
-//
-//            String xml = generator.generate( element );
-//
-//            System.out.println( xml );
-//        }
-//        catch( EarlyExitException e )
-//        {
-//            ;
-//        }
+        try
+        {
+            parseOptionsFromCommandLine( args );
+
+            try
+            {
+                if( PASSIVE )
+                {
+                    throw new EarlyExitException();
+                }
+
+                element = parser.parse();
+            }
+            catch( ParserBrokenException e )
+            {
+                e.printStackTrace();
+            }
+
+            XmlGenerator generator = createAndConfigureGenerator();
+
+            String xml = generator.generate( element );
+
+            System.out.println( xml );
+            
+            PrintStream out = null;
+            try {
+                out = new PrintStream(new FileOutputStream("result2.xml"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            out.print(xml);
+        }
+        catch( EarlyExitException e )
+        {
+            ;
+        }
+
 
 
     }
@@ -156,9 +162,9 @@ public class JsonToXmlFilter {
     }
 
     private static String readContentFromFile(String filename) throws IOException {
-        File f = new File(filename);
-        FileInputStream fis = new FileInputStream(f);
-        byte[] contents = new byte[(int) f.length()];
+        File file = new File(filename);
+        FileInputStream fis = new FileInputStream(file);
+        byte[] contents = new byte[(int) file.length()];
 
         fis.read(contents);
         fis.close();

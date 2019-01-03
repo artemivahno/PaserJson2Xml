@@ -1,129 +1,46 @@
 package by.artsoimiv.nexttry.generator;
 
-import by.artsoimiv.nexttry.JsonFileReader;
 import by.artsoimiv.nexttry.exception.EarlyExitException;
 import by.artsoimiv.nexttry.exception.ParserBrokenException;
 import by.artsoimiv.nexttry.parser.Element;
 import by.artsoimiv.nexttry.parser.JsonParser;
+import by.artsoimiv.nexttry.utils.FileUtil;
 
-import java.io.*;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class JsonToXmlFilter {
-
-    private static final int EIO = 5;  // (from errno.h)
-
-    private static String ROOTNAME = null;
-    private static String XMLDECL = null;
-    private static String DTD = null;
-    private static String DOCTYPE = null;
-    private static String TABWIDTH = null;
-    private static String INPUTFILE = null;
+    private static String  ROOTNAME = null;
+    private static String  XMLDECL = null;
+    private static String  DTD = null;
+    private static String  DOCTYPE = null;
+    private static String  TABWIDTH = null;
+    private static String  INPUTFILE = null;
 
     private static boolean PASSIVE = false;
+    private static boolean LOGGING = false;
     private static boolean PRETTY = false;
 
-    private static void badCommandLine() throws EarlyExitException {
-        throw new EarlyExitException();
-    }
-
-    private static void parseOptionsFromCommandLine(String[] args) throws EarlyExitException {
-        if (args == null)    // shouldn't happen, but treat as if args.length == 1...
-            return;
-
-        String lookingFor = null;
-
-        for (String arg : args) {
-            switch (arg) {
-                default:
-                    if (lookingFor == null) {
-                        INPUTFILE = arg;
-
-                        if (isEmpty(INPUTFILE))
-                            badCommandLine();
-                        break;
-                    }
-
-                    switch (lookingFor) {
-                        case "rootname":
-                            ROOTNAME = arg;
-                            lookingFor = null;
-                            break;
-                        case "xmldecl":
-                            XMLDECL = arg;
-                            lookingFor = null;
-                            break;
-                        case "dtd":
-                            DTD = arg;
-                            lookingFor = null;
-                            break;
-                        case "doctype":
-                            DOCTYPE = arg;
-                            lookingFor = null;
-                            break;
-                        case "tabwidth":
-                            TABWIDTH = arg;
-                            lookingFor = null;
-                            break;
-                    }
-                    break;
-
-                case "--rootname":
-                    lookingFor = "rootname";
-                    break;
-                case "--xmldecl":
-                    lookingFor = "xmldecl";
-                    break;
-                case "--dtd":
-                    lookingFor = "dtd";
-                    break;
-                case "--doctype":
-                    lookingFor = "doctype";
-                    break;
-                case "--tabwidth":
-                    lookingFor = "tabwidth";
-                    break;
-
-                case "--pretty":
-                    PRETTY = true;
-                    break;
-
-                case "--version":
-                    System.exit(0);
-                    break;
-
-                case "--help":
-                    throw new EarlyExitException();
-            }
-        }
-    }
-
-    public static void main(String[] args) {
 
 
-        JsonFileReader readJson = new JsonFileReader("by/artsoimiv/recources/sample.json");
-
-        JsonParser parser = new JsonParser(readJson.getFile("by/artsoimiv/recources/sample.json"));
-
-        Element element = null;
-
-        /*try {
-            element = parser.parse();
-        } catch (ParserBrokenException e) {
-            e.printStackTrace();
-        }
-        XmlGenerator generator = createAndConfigureGenerator();
-
-        String xml = generator.generate(element);*/
-
+    public static void main( String[] args )
+    {
+        String content = FileUtil.readJson();
 
         try
         {
-            parseOptionsFromCommandLine( args );
+            //parseOptionsFromCommandLine( args );
+
+
+            JsonParser parser = new JsonParser( content );
+
+            Element element = null;
 
             try
             {
                 if( PASSIVE )
                 {
+                    outputOptionsAsIfToRun();
                     throw new EarlyExitException();
                 }
 
@@ -138,66 +55,73 @@ public class JsonToXmlFilter {
 
             String xml = generator.generate( element );
 
-            System.out.println( xml );
-            
-            PrintStream out = null;
-            try {
-                out = new PrintStream(new FileOutputStream("result2.xml"));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            out.print(xml);
+            FileUtil.writeXml(xml);
         }
         catch( EarlyExitException e )
         {
             ;
         }
-
-
-
     }
 
-    private static final boolean isEmpty(String string) {
-        return (string == null || string.length() < 1);
+    private static final boolean isEmpty( String string ) { return( string == null || string.length() < 1 ); }
+
+
+    private static String readContentFromStdIn() throws IOException
+    {
+        StringBuilder sb = new StringBuilder();
+
+        Scanner sc = new Scanner( System.in );
+
+        while( sc.hasNextLine() )
+            sb.append( sc.nextLine() );
+
+        sc.close();
+
+        return sb.toString();
     }
 
-    private static String readContentFromFile(String filename) throws IOException {
-        File file = new File(filename);
-        FileInputStream fis = new FileInputStream(file);
-        byte[] contents = new byte[(int) file.length()];
-
-        fis.read(contents);
-        fis.close();
-
-        return new String(contents, "UTF-8");
+    private static final void outputOptionsAsIfToRun()
+    {
+      //  doApplicationHeader();
+        System.out.println( "Here are the options in force were you to run the filter:" );
+        System.out.println( " ROOTNAME = " + ROOTNAME );
+        System.out.println( "  XMLDECL = " + XMLDECL );
+        System.out.println( "      DTD = " + DTD );
+        System.out.println( "  DOCTYPE = " + DOCTYPE );
+        System.out.println( " TABWIDTH = " + TABWIDTH );
+        System.out.println( "INPUTFILE = " + INPUTFILE );
+        System.out.println( "  PASSIVE = " + PASSIVE );
+        System.out.println( "  LOGGING = " + LOGGING );
+        System.out.println( "   PRETTY = " + PRETTY );
     }
 
-    private static XmlGenerator createAndConfigureGenerator() {
+    private static XmlGenerator createAndConfigureGenerator()
+    {
         XmlGenerator generator = new XmlGenerator();
 
-        if (!isEmpty(ROOTNAME))
-            generator.setRootName(ROOTNAME);
-        if (!isEmpty(XMLDECL))
-            generator.setXmlDeclaration(XMLDECL);
-        if (!isEmpty(DTD))
-            generator.setDtd(DTD);
-        if (!isEmpty(DOCTYPE))
-            generator.setDocType(DOCTYPE);
+        if( !isEmpty( ROOTNAME ) )
+            generator.setRootName( ROOTNAME );
+        if( !isEmpty( XMLDECL ) )
+            generator.setXmlDeclaration( XMLDECL );
+        if( !isEmpty( DTD ) )
+            generator.setDtd( DTD );
+        if( !isEmpty( DOCTYPE ) )
+            generator.setDocType( DOCTYPE );
 
         // pretty printing stuff...
         int tabwidth = 0;
 
-        if (!isEmpty(TABWIDTH))
-            tabwidth = Integer.parseInt(TABWIDTH);
+        if( !isEmpty( TABWIDTH ) )
+            tabwidth = Integer.parseInt( TABWIDTH );
 
-        if (PRETTY) {
-            if (tabwidth > 0)
-                generator.configurePrettyPrinter(true, tabwidth);
+        if( PRETTY )
+        {
+            if( tabwidth > 0 )
+                generator.configurePrettyPrinter( true, tabwidth );
             else
-                generator.configurePrettyPrinter(true);
+                generator.configurePrettyPrinter( true );
         }
 
 
         return generator;
-    }
-}
+    }}

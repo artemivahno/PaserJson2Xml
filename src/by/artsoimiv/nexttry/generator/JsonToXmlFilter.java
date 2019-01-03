@@ -29,9 +29,6 @@ public class JsonToXmlFilter {
 
         try
         {
-            //parseOptionsFromCommandLine( args );
-
-
             JsonParser parser = new JsonParser( content );
 
             Element element = null;
@@ -43,7 +40,6 @@ public class JsonToXmlFilter {
                     outputOptionsAsIfToRun();
                     throw new EarlyExitException();
                 }
-
                 element = parser.parse();
             }
             catch( ParserBrokenException e )
@@ -57,10 +53,7 @@ public class JsonToXmlFilter {
 
             FileUtil.writeXml(xml);
         }
-        catch( EarlyExitException e )
-        {
-            ;
-        }
+        catch( EarlyExitException e ){}
     }
 
     private static final boolean isEmpty( String string ) { return( string == null || string.length() < 1 ); }

@@ -32,6 +32,8 @@ public class JsonFunctions {
         String key = json.substring(0, json.indexOf(':'));
         System.out.println("key: " + key);
         json = removeKey(json);
+        //запомнть key,
+
         xmlFunctions.putStart(key);
         parseValue(json, key);
         if (prevKey != null) {
@@ -107,17 +109,37 @@ public class JsonFunctions {
     }
 
     //  проверка корректности json
+    private String regex = "\\{\\}"; //что не так в этой регулярке?
     public boolean checkJson(String json) {
         if (json.startsWith("{") && json.endsWith("}")) {
             int countOpen = countChar('{', json);
             int countClose = countChar('}', json);
-            if (countOpen == countClose) {
+            int quote = countChar('"', json);
+            int semicolon = countChar(';', json);
+
+            //условия валидации
+            if (countOpen == countClose && quote %2==0 && semicolon==0 && !matches(regex,json)) {
                 return true;
             }
             return false;
         }
+
         return false;
     }
+
+    static boolean matches(String regex, CharSequence json) {
+        return false;
+    }
+/*
+    private boolean matches (String json, String regex){
+        boolean b=false;
+        String regexp = "[^{}$]";
+        Pattern pattern = Pattern.compile(regexp);
+        Matcher matcher = pattern.matcher(json);
+        if (matcher.find()){
+            b=true;
+     return b;
+    }*/
 
     // функция подсчета количества определенных символов в строке
     private int countChar(char c, String json) {
@@ -130,6 +152,8 @@ public class JsonFunctions {
         }
         return n;
     }
+
+
 
     // функция удаления последнего элемента строки
     public String removeLastChar(String json) {

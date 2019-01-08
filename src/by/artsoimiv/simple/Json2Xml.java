@@ -17,7 +17,10 @@ public class Json2Xml {
         try {
             XmlFunctions xmlFunctions = new XmlFunctions();
             JsonFunctions jsonFunctions = new JsonFunctions(xmlFunctions);
+
+
             Scanner scanner = new Scanner(new File("test.json"));
+
             String json = "";
             while (scanner.hasNext()) {
                 json += scanner.next();
@@ -30,6 +33,7 @@ public class Json2Xml {
                 json = jsonFunctions.removeFirstChar(json);
                 json = jsonFunctions.removeLastChar(json);
                 jsonFunctions.parseStart(json);
+//вызов функции формирования из мапы
                 System.out.println(xmlFunctions.getXml());
                 PrintStream out = new PrintStream(new FileOutputStream("result.xml"));
                 out.print(xmlFunctions.getXml());
